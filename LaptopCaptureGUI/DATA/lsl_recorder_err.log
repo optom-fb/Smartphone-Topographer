@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "D:\MATLAB\placido\CameraRecorderGUI\lsl_recorder.py", line 43, in <module>
+    import pylsl
+ModuleNotFoundError: No module named 'pylsl'
