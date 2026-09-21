@@ -42,7 +42,10 @@ themeText=get(groot,'defaultAxesXColor');
 old=findall(groot,'Type','figure','Tag','PairedMireReport');
 delete(old);
 f=figure('Name','Smartphone Topographer - mire review','Tag','PairedMireReport', ...
-    'NumberTitle','off','Visible','on','Color',themeBg,'Position',[60 60 1400 900]);
+    'NumberTitle','off','Visible','on','Color',themeBg, ...
+    'WindowStyle','normal','Units','normalized','OuterPosition',[0 0 1 1]);
+drawnow;
+f.WindowState='maximized';
 tabs=uitabgroup(f);
 pairedAxes=gobjects(2,1);
 pairedTables=cell(2,1);
@@ -279,6 +282,16 @@ tabs.Children=ordered;
 tabs.SelectedTab=ordered(1);
 drawnow;
 savefig(f,fullfile(folder,'Paired_mire_review.fig'));
+% Some MATLAB desktop configurations restore a figure's earlier size while
+% tabs and controls are being created. Reapply both full-screen mechanisms
+% after the completed report has been rendered and saved.
+f.WindowState='normal';
+f.Units='normalized';
+f.OuterPosition=[0 0 1 1];
+drawnow;
+f.WindowState='maximized';
+figure(f);
+drawnow;
 end
 
 function [displayShapes,geometry]=smartKCSourcePixelGeometry(result,metrics)

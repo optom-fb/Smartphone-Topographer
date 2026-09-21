@@ -12,7 +12,7 @@ dataRoot = fullfile(root,'Data');
 if ~isfolder(dataRoot), mkdir(dataRoot); end
 
 %% USER SETTINGS
-INPUT_IMAGE_NAME = 'trial_proposal.jpg'; % writeup demonstration image in Data
+INPUT_IMAGE_NAME = 'trial1.jpg'; % default demonstration image in Data
 FIRST_MIRE = 1;              % first mire included in the final comparison
 LAST_MIRE = 15;              % last mire included in the final comparison
 
