@@ -1,0 +1,23 @@
+function reportWriteupStep(method,step)
+% Log completed figure stages using the manuscript numbering only.
+if strcmp(method,'Placido')
+    old=[1 2 3 4 6 7 8 9 10 11 13 14 15 16 20 21 22 23 28];
+    labels={'Acquire image','Grayscale','Canny edges','Component cleanup', ...
+        'Historical coarse centre','Polar unwrap','Radial polarity', ...
+        'Connected objects','Enclosure filter','Dedicated hub', ...
+        'Dedicated radial masks','Fragment merging','Subtense gate', ...
+        'Physical mire centrelines','Binning and robust spline fitting', ...
+        'Eigen ratio','Centre dispersion','Ellipse irregularity','Image axes'};
+    phase1=15;
+else
+    old=[1:6 20 21 22 23 28];
+    labels={'Read and orient','Centre crop','Flat-field normalization', ...
+        'Dark mire response','Segmentation','Radial peaks','Completeness gate', ...
+        'Eigen ratio','Centre dispersion','Ellipse irregularity','Image axes'};
+    phase1=7;
+end
+k=find(old==step,1); if isempty(k), return; end
+phase=1; number=k;
+if k>phase1, phase=2; number=k-phase1; end
+fprintf('%s | Phase %d Step %02d: %s complete\n',method,phase,number,labels{k});
+end

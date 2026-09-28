@@ -1,0 +1,20 @@
+# Generated image-processing runs remain local.
+/Output/*
+/AnalysisPipeline/outputs/
+
+# Locally acquired participant/camera data remain outside version control.
+/Data/GUI Data/
+
+# Local interactive-session history files.
+.Rhistory
+
+# MATLAB, operating-system, and runtime scratch files.
+*.asv
+*.bak
+*.log
+*.pid
+*.tmp
+Thumbs.db
+.DS_Store
+.settings.json
+.instance.lock
