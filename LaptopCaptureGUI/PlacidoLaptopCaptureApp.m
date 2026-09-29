@@ -49,6 +49,10 @@ state.PreviewFrameGrabInterval = 1;
 % expensive than acquiring or writing it. Limit graphics updates, especially
 % during disk recording, but always keep every acquired camera frame for AVI.
 state.LivePreviewDisplayPeriodSeconds = 1 / 15;
+% Limit only the displayed preview raster. XData/YData retain source-image
+% coordinates, so the alignment guide stays correctly scaled, while saved
+% snapshots and guided videos continue to use the native camera frames.
+state.PreviewDisplayMaxDimension = 1280;
 state.PreviewDisplayClock = [];
 state.LastPreviewDisplayTimeSeconds = -Inf;
 state.GuidedIrOnlySeconds = 3;
@@ -566,7 +570,10 @@ refreshArduinoPorts();
             imageHeight = state.VideoResolution(2);
             imageWidth = state.VideoResolution(1);
             imageBands = state.Video.NumberOfBands;
-            blankFrame = zeros(imageHeight, imageWidth, imageBands, 'uint8');
+            previewStride = getPreviewDisplayStride(imageWidth, imageHeight);
+            previewHeight = numel(1:previewStride:imageHeight);
+            previewWidth = numel(1:previewStride:imageWidth);
+            blankFrame = zeros(previewHeight, previewWidth, imageBands, 'uint8');
             state.PreviewImage = image(previewAxes, blankFrame);
             state.PreviewImage.XData = [1 imageWidth];
             state.PreviewImage.YData = [1 imageHeight];
@@ -748,6 +755,11 @@ refreshArduinoPorts();
         previewAxes.Position = [0.015 0.015 0.97 0.96];
     end
 
+    function stride = getPreviewDisplayStride(imageWidth, imageHeight)
+        stride = max(1, ceil(max(imageWidth, imageHeight) / ...
+            state.PreviewDisplayMaxDimension));
+    end
+
     function onPreviewFrame(~, event, imageHandle)
         % The preview callback must set CData itself when it is registered.
         % It also prevents the adaptor from shrinking the display coordinates.
@@ -774,13 +786,15 @@ refreshArduinoPorts();
             return
         end
 
-        imageHandle.CData = frameData;
-        imageHandle.XData = [1 imageWidth];
-        imageHandle.YData = [1 imageHeight];
+        previewStride = getPreviewDisplayStride(imageWidth, imageHeight);
+        imageHandle.CData = frameData(1:previewStride:end, ...
+            1:previewStride:end, :);
         state.LastPreviewDisplayTimeSeconds = currentDisplayTime;
 
         if resolutionChanged
             state.VideoResolution = [imageWidth imageHeight];
+            imageHandle.XData = [1 imageWidth];
+            imageHandle.YData = [1 imageHeight];
             configurePreviewAxes(imageWidth, imageHeight);
             updateAlignmentGuide();
         end
